@@ -1,0 +1,3 @@
+# claude-codebase-navigator
+# Only one required dependency — everything else uses the Python standard library.
+pyyaml>=6.0

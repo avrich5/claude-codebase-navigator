@@ -1,0 +1,18 @@
+# Generated output — do not commit
+catalog_state.json
+history/
+wiki/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Config (contains your personal paths)
+config.yaml
+
+# OS
+.DS_Store
+Thumbs.db

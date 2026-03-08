@@ -1,0 +1,80 @@
+# claude-codebase-navigator — configuration
+# Copy this file to config.yaml and edit to match your setup.
+# ─────────────────────────────────────────────────────────────
+
+# ── Scanning sources ─────────────────────────────────────────
+sources:
+  # Primary local development directory
+  local_dev: ~/VisualStudio          # or ~/Projects, ~/code, ~/dev …
+
+  # (Optional) Directory with git-cloned production repos
+  # Leave empty or remove if you only have one source
+  production: ~/gitlab-prod          # cloned from GitLab/GitHub
+
+# ── Output paths ─────────────────────────────────────────────
+output:
+  catalog_state: ./catalog_state.json   # scanned metadata cache
+  wiki_dir: ./wiki                      # generated Markdown wiki
+  history_dir: ./history                # timestamped scan snapshots
+
+# ── Git remote (optional) ─────────────────────────────────────
+# Used to generate GitLab/GitHub deep links in the wiki.
+# Leave empty to skip links.
+git_remote:
+  base_url: https://github.com/yourorg   # or https://git.example.com/group
+
+# ── Project categories ────────────────────────────────────────
+# Auto-detection by keyword in project name.
+# Add / rename / remove categories to match your domain.
+categories:
+  backend:
+    icon: "⚙️"
+    title: "Backend Services"
+    keywords: [api, service, server, backend, worker, daemon]
+
+  frontend:
+    icon: "🎨"
+    title: "Frontend Apps"
+    keywords: [ui, frontend, web, app, dashboard, landing]
+
+  data:
+    icon: "📊"
+    title: "Data & Analytics"
+    keywords: [data, pipeline, etl, analytics, miner, scraper]
+
+  ml:
+    icon: "🧠"
+    title: "ML & AI"
+    keywords: [model, predict, train, llm, ai, ml, neural]
+
+  infra:
+    icon: "🛠"
+    title: "Infrastructure"
+    keywords: [infra, deploy, docker, k8s, terraform, ci, monitoring]
+
+  libs:
+    icon: "📦"
+    title: "Libraries & SDKs"
+    keywords: [lib, sdk, client, utils, helpers, common, shared]
+
+# ── Local-only projects ───────────────────────────────────────
+# Projects that live only on disk and are NOT in git_remote.
+# Format: name: /absolute/or/~/relative/path
+local_only:
+  # my-prototype: ~/scratch/my-prototype
+
+# ── Name aliases ──────────────────────────────────────────────
+# When a project's local directory name differs from its remote repo name.
+# Format:  local_name: remote_name
+aliases:
+  # profitradar_ui: profitradar
+
+# ── Known integrations (optional, manually maintained) ────────
+# Describes which service talks to which.
+# Auto-detection via .env / docker-compose is also attempted automatically.
+integrations:
+  # frontend:
+  #   - target: backend-api
+  #     type: HTTP
+  #     url: "http://localhost:8080"
+  #     data: "REST API calls"
