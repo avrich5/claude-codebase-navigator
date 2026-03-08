@@ -13,6 +13,7 @@ When you ask an LLM to help across multiple repos, it burns hundreds of tokens e
 | Feature | Description |
 |---------|-------------|
 | 🗺 **Prompt maps** | One command generates a compact map of selected projects (tech stack, ports, integrations, key files, README) — ready to paste into any LLM prompt |
+| 🔬 **Single-project deep review** | Full wiki page per project — git history, all key files ranked by size, tech stack, integrations — structured for LLM code review |
 | 📚 **Markdown wiki** | Auto-generated wiki with index, per-project pages, status dashboard, timeline, and tech matrix |
 | 🔍 **Auto-detection** | Tech stack, integrations via `.env` / `docker-compose.yml`, git status |
 | ⚙️ **Zero lock-in** | Pure Python, one YAML config, works with any git host (GitHub, GitLab, Bitbucket, self-hosted) |
@@ -37,7 +38,7 @@ The wiki is generated in `./wiki/INDEX.md`.
 
 ---
 
-## The killer feature: `--map`
+## Killer feature 1: `--map` for multi-project context
 
 When you need LLM help across multiple services, run:
 
@@ -69,6 +70,74 @@ Paste this into your prompt. The LLM immediately understands the architecture �
 3. Copy the output (or contents of wiki/_prompt_map_N.md)
 4. Paste into your Claude / ChatGPT prompt along with your question
 ```
+
+---
+
+## Killer feature 2: wiki pages for single-project deep review
+
+When you need an LLM to review, refactor, or deeply understand one large project, the `--map` compact format isn't enough — you need the full structured picture.
+
+Every project gets a rich wiki page at `wiki/projects/<name>.md` containing:
+
+```
+# payment-service
+
+**Status:** 🟢 active  ·  **Branch:** main  ·  **Commits:** 847
+
+### Recent commits
+- 2026-03-05  feat: add idempotency keys to charge endpoint
+- 2026-03-04  fix: retry logic on Stripe timeout
+- 2026-03-02  refactor: extract PaymentIntent factory
+
+## Tech Stack
+- Languages: Python
+- Frameworks: FastAPI, SQLAlchemy, Redis, Celery
+- Tools: Docker Compose, GitLab CI
+
+## Integrations
+| Target         | Type  | URL                      |
+|----------------|-------|--------------------------|
+| NOTIFICATION_URL | HTTP | http://notify-svc:9000  |
+| ANALYTICS_URL  | HTTP  | http://analytics:8080    |
+
+## Files (148 code / 42 docs / 11 data)
+### Code — top files by size
+| File                          | Size  | Modified   |
+|-------------------------------|-------|------------|
+| app/services/charge.py        | 48 KB | 2026-03-05 |
+| app/routers/payments.py       | 31 KB | 2026-03-04 |
+| app/models/transaction.py     | 22 KB | 2026-03-02 |
+...
+
+## README
+[full README excerpt up to 4000 chars]
+```
+
+### Why this beats asking the LLM to explore the repo itself
+
+| Approach | Tokens spent on orientation | Tokens left for actual work |
+|---|---|---|
+| LLM explores via MCP | ~3,000–8,000 | what's left |
+| Paste `wiki/projects/<name>.md` | ~800–1,500 | almost everything |
+
+The wiki page is pre-computed, noise-free (data artifact dirs filtered out), and ranked by importance — so the LLM starts with the most relevant files, not alphabetical order or random directory traversal.
+
+### Recommended workflow for code review
+
+```
+1. Run: python navigate.py   (or --wiki-only if already scanned)
+2. Open: wiki/projects/<your-project>.md
+3. Copy the full contents
+4. Paste into your LLM prompt:
+   "Here is the project structure: [paste wiki page]
+    Now review the charge.py service and suggest improvements."
+```
+
+This works especially well for:
+- **Refactoring sessions** — LLM sees all files ranked by size, knows the full tech stack
+- **Bug investigation** — recent commit history shows exactly what changed and when
+- **Onboarding new LLM context** — after hitting token limits mid-conversation, paste the wiki page to restore full project awareness instantly
+- **Code review of a PR** — combine wiki page + diff for complete context
 
 ---
 
@@ -124,21 +193,9 @@ wiki/
 ├── TIMELINE.md       # recent commits across all repos
 ├── TECH_MATRIX.md    # technology usage per project
 ├── categories/       # one page per category
-├── projects/         # one page per project
-└── _prompt_map_*.md  # auto-saved prompt maps
+├── projects/         # one page per project  ← killer feature 2
+└── _prompt_map_*.md  # auto-saved prompt maps  ← killer feature 1
 ```
-
----
-
-## Project page example
-
-Each project gets a full page with:
-- Git status, branch, recent commit history
-- Tech stack (auto-detected from `requirements.txt`, `package.json`, `Dockerfile`)
-- Docker services with ports and key env vars
-- Auto-detected integrations from `.env` files (URL references)
-- Key code files
-- README excerpt
 
 ---
 
@@ -148,13 +205,17 @@ Each project gets a full page with:
 > "Why are `payment-service` and `order-service` out of sync?"
 > → `--map payment-service order-service` → paste map → ask Claude
 
+**Deep single-project review**
+> "Refactor the charge service — suggest improvements"
+> → paste `wiki/projects/payment-service.md` → ask Claude
+
 **Onboarding**
 > New team member needs to understand which services exist and how they connect
 > → share the generated `wiki/INDEX.md`
 
-**Architecture review**
-> Need to document all services and their integrations
-> → run scan → share `wiki/INTEGRATION_MAP.md` *(if integrations are configured)*
+**Restoring LLM context mid-conversation**
+> Hit token limit, need to continue in a new chat
+> → paste the relevant `wiki/projects/<n>.md` to instantly restore full project awareness
 
 **Code review context**
 > Reviewing a PR that touches 3 services
@@ -181,7 +242,7 @@ src/
   scanner.py         # single-project metadata extraction
   catalog.py         # multi-project scan orchestration & state
   wiki.py            # Markdown wiki generation
-  mapper.py          # prompt map generation (the killer feature)
+  mapper.py          # prompt map generation (killer feature 1)
 config.example.yaml  # annotated config template
 ```
 
