@@ -145,7 +145,11 @@ def generate_map(project_names: list[str], catalog: dict, cfg: Config) -> str:
         code_files = sorted(
             by_type.get("code", {}).get("files", []),
             key=lambda f: (
+                # Tier 1: named entry points
                 0 if any(k in Path(f["path"]).name.lower() for k in ["main", "app", "server", "orchestrator", "router", "cli", "index"]) else 1,
+                # Tier 2: larger files rank higher
+                -f.get("size", 0),
+                # Tier 3: shallower paths rank higher
                 len(f["path"].split("/")),
             )
         )[:8]

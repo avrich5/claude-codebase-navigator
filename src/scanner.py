@@ -26,6 +26,18 @@ _IMPORTANT_NAMES = {
     "orchestrator", "router", "server", "index", "cli",
 }
 
+# Directories that are data/test artifacts — counted in stats but excluded from file listings
+_NOISY_DIRS = {
+    "test_data", "tests_data", "bruteforce_results", "backtest_results",
+    "fixtures", "samples", "snapshots", "cache", ".cache",
+    "node_modules", ".git", "__pycache__", ".venv", "venv", "env",
+    ".tox", ".mypy_cache", ".pytest_cache", "dist", "build",
+    ".next", ".nuxt", "coverage", ".cache", ".eggs", ".ruff_cache",
+}
+
+# Directories matched by prefix pattern — any dir whose name starts with these
+_NOISY_PREFIXES = ("bruteforce_", "backtest_", "test_run_", "run_")
+
 _FRAMEWORK_HINTS = {
     "fastapi": "FastAPI", "flask": "Flask", "django": "Django",
     "streamlit": "Streamlit", "gradio": "Gradio",
@@ -114,11 +126,35 @@ class ProjectScanner:
             return {"error": str(exc)}
 
 
+    def _is_noisy_dir(self, dirname: str) -> bool:
+        """Return True for data-artifact dirs that pollute file listings."""
+        if dirname in _NOISY_DIRS:
+            return True
+        dl = dirname.lower()
+        return any(dl.startswith(p) for p in _NOISY_PREFIXES)
+
     def _scan_files(self) -> dict:
+        # Two passes:
+        # - stats (count/size): walks ALL dirs except skip_dirs
+        # - listings (file list for wiki/map): also skips noisy dirs
         stats: dict = defaultdict(lambda: {"count": 0, "total_size": 0, "files": []})
         total = 0
+
         for root, dirs, files in os.walk(self.path):
+            rel_root = Path(root).relative_to(self.path)
+            depth_root = len(rel_root.parts)  # 0 = project root
+
+            # Always skip hidden/build dirs for both stats and listings
             dirs[:] = [d for d in dirs if d not in self.cfg.skip_dirs]
+
+            # Noisy dirs: still count files in stats, but don't recurse into their sub-dirs
+            # and don't add their files to the listing
+            in_noisy = depth_root > 0 and self._is_noisy_dir(rel_root.parts[0])
+
+            # Also suppress recursion INTO noisy dirs (prune at first level)
+            if depth_root == 0:
+                dirs[:] = [d for d in dirs if not self._is_noisy_dir(d)]
+
             for fname in files:
                 ext = Path(fname).suffix.lower()
                 if ext not in ALL_EXTENSIONS:
@@ -131,16 +167,24 @@ class ProjectScanner:
                     continue
                 rel = str(fpath.relative_to(self.path))
                 total += 1
+
                 if ext in CODE_EXTENSIONS:       ftype = "code"
                 elif ext in DOC_EXTENSIONS:      ftype = "docs"
                 elif ext in CONFIG_EXTENSIONS:   ftype = "config"
                 else:                            ftype = "data"
+
                 stats[ftype]["count"] += 1
                 stats[ftype]["total_size"] += size
+
+                # FIX 1: skip noisy dirs from listings
+                if in_noisy:
+                    continue
+
                 depth = len(Path(rel).parts)
                 important = any(k in fname.lower() for k in _IMPORTANT_NAMES)
                 if depth <= 2 or important:
                     stats[ftype]["files"].append({"path": rel, "size": size, "modified": mtime})
+
         return {"total_indexed": total, "by_type": {k: dict(v) for k, v in stats.items()}}
 
     def _extract_readme(self) -> Optional[str]:
@@ -148,10 +192,12 @@ class ProjectScanner:
             p = self.path / name
             if p.exists():
                 try:
-                    return p.read_text(errors="ignore")[:3000]
+                    # FIX 3: increased from 3000 to 4000 chars
+                    return p.read_text(errors="ignore")[:4000]
                 except Exception:
                     pass
         return None
+
 
     def _detect_tech_stack(self) -> dict:
         stack: dict[str, set] = {"languages": set(), "frameworks": set(), "tools": set()}
@@ -173,12 +219,29 @@ class ProjectScanner:
             if (self.path / fname).exists():
                 if lang: stack["languages"].add(lang)
                 if tool: stack["tools"].add(tool)
-        req = self.path / "requirements.txt"
-        if req.exists():
-            txt = req.read_text(errors="ignore").lower()
-            for key, label in _FRAMEWORK_HINTS.items():
-                if key in txt:
-                    stack["frameworks"].add(label)
+
+        # Also search one level deep for requirements.txt (e.g. backend/requirements.txt)
+        if not (self.path / "requirements.txt").exists():
+            for sub in self.path.iterdir():
+                if sub.is_dir() and sub.name not in self.cfg.skip_dirs:
+                    if (sub / "requirements.txt").exists():
+                        stack["languages"].add("Python")
+                        stack["tools"].add("pip")
+                        break
+
+        # Parse requirements.txt (root or first subdir found)
+        for req_path in [self.path / "requirements.txt"] + list(self.path.glob("*/requirements.txt")):
+            if req_path.exists():
+                try:
+                    txt = req_path.read_text(errors="ignore").lower()
+                    for key, label in _FRAMEWORK_HINTS.items():
+                        if key in txt:
+                            stack["frameworks"].add(label)
+                except Exception:
+                    pass
+                break
+
+        # Parse package.json
         pkg = self.path / "package.json"
         if pkg.exists():
             try:
@@ -189,6 +252,7 @@ class ProjectScanner:
                         stack["frameworks"].add(label)
             except Exception:
                 pass
+
         return {k: sorted(v) for k, v in stack.items()}
 
     def _detect_integrations(self) -> list[dict]:
