@@ -119,19 +119,62 @@ class Config:
 
 
 def load(config_path: str | Path = "config.yaml") -> Config:
-    """Load config from YAML file. Falls back to defaults if file not found."""
-    path = Path(config_path)
-    if not path.exists():
-        script_dir = Path(sys.argv[0]).parent if sys.argv[0] else Path(".")
-        alt = script_dir / config_path
-        if alt.exists():
-            path = alt
+    """
+    Load config using the following search order:
 
-    if path.exists():
-        raw = _load_yaml(path.read_text(encoding="utf-8"))
-    else:
-        print(f"⚠️  Config file not found: {config_path}")
-        print("   Using built-in defaults. Copy config.example.yaml → config.yaml to customise.")
-        raw = {}
+    1. Explicit --config path (if provided by user)
+    2. ./config.yaml              — current working directory
+    3. ~/.config/navigate/config.yaml  — global user config
+    4. <script_dir>/config.yaml   — next to navigate.py
+    5. Built-in defaults          — with a warning
+    """
+    _GLOBAL_CONFIG = Path.home() / ".config" / "navigate" / "config.yaml"
 
-    return Config(raw or {})
+    # If the user explicitly passed --config, use only that path
+    if str(config_path) != "config.yaml":
+        p = Path(config_path)
+        if p.exists():
+            return Config(_load_yaml(p.read_text(encoding="utf-8")) or {})
+        print(f"❌  Config file not found: {p}")
+        sys.exit(1)
+
+    # Auto-search order
+    candidates = [
+        Path.cwd() / "config.yaml",                         # 1. cwd (project-local)
+        _GLOBAL_CONFIG,                                      # 2. global user config
+        Path(sys.argv[0]).resolve().parent / "config.yaml",  # 3. next to script (fallback)
+    ]
+
+    for candidate in candidates:
+        if candidate.exists():
+            raw = _load_yaml(candidate.read_text(encoding="utf-8")) or {}
+            # For global config: always resolve output paths to ~/.config/navigate/
+            # Override relative paths (./...) so output lands next to the config,
+            # not in whatever cwd the user happens to be in
+            if candidate == _GLOBAL_CONFIG:
+                base = str(_GLOBAL_CONFIG.parent)
+                out = raw.setdefault("output", {})
+                for key, default in [
+                    ("catalog_state", f"{base}/catalog_state.json"),
+                    ("wiki_dir",      f"{base}/wiki"),
+                    ("history_dir",   f"{base}/history"),
+                ]:
+                    val = out.get(key, "")
+                    # Replace relative paths like ./something with absolute
+                    if not val or str(val).startswith("."):
+                        out[key] = default
+            return Config(raw)
+
+    # Nothing found — print helpful message
+    print("⚠️  No config.yaml found. Search order:")
+    for c in candidates:
+        print(f"     {c}")
+    print()
+    print("   To create a global config (recommended for global 'navigate' command):")
+    script_dir = Path(sys.argv[0]).resolve().parent
+    print(f"   mkdir -p ~/.config/navigate")
+    print(f"   cp {script_dir}/config.example.yaml ~/.config/navigate/config.yaml")
+    print(f"   # then edit ~/.config/navigate/config.yaml")
+    print()
+    print("   Using built-in defaults for now.")
+    return Config({})
