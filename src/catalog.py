@@ -37,6 +37,50 @@ class CatalogEngine:
         snap = self.cfg.history_dir / f"catalog_{ts}.json"
         snap.write_text(json.dumps(self.projects, indent=2, default=str))
 
+    def add_project(self, path: str | Path, name: Optional[str] = None) -> dict:
+        """
+        Scan a single project from an arbitrary path and merge it into the catalog.
+
+        Usage:
+            python navigate.py --add-project /Users/andriy/docvault
+            python navigate.py --add-project /Users/andriy/docvault --name my-vault
+
+        The project is scanned, added to catalog_state.json, and its wiki page
+        is generated/updated. Existing projects in the catalog are preserved.
+        """
+        project_path = Path(path).expanduser().resolve()
+
+        if not project_path.exists():
+            raise FileNotFoundError(f"Path not found: {project_path}")
+        if not project_path.is_dir():
+            raise NotADirectoryError(f"Not a directory: {project_path}")
+
+        project_name = name or project_path.name
+
+        print(f"\n{'═'*60}")
+        print(f"  Adding project: {project_name}")
+        print(f"  Path: {project_path}")
+        print(f"{'═'*60}\n")
+
+        # Load existing catalog so we don't overwrite other projects
+        self.projects = dict(self.previous_state)
+
+        scanner = ProjectScanner(project_path, self.cfg)
+        scanner.name = project_name
+
+        print(f"  Scanning {project_name:<40}", end="", flush=True)
+        meta = scanner.scan()
+        meta["name"] = project_name
+        meta["manually_added"] = True   # mark so it survives full rescans
+        self.projects[project_name] = meta
+
+        cat_info = self.cfg.categories.get(meta["category"], {"icon": "📦", "title": "Uncategorized"})
+        print(f"  {meta['status']}  {cat_info['icon']} {cat_info['title']}")
+
+        self.save_state()
+        print(f"\n✅  Added '{project_name}' → {self.cfg.catalog_state}")
+        return meta
+
     def scan_all(self, category_filter: Optional[str] = None) -> dict:
         cfg = self.cfg
         dirs_map: dict[str, Path] = {}
@@ -56,6 +100,13 @@ class CatalogEngine:
         for name, path in cfg.local_only.items():
             if path and path.exists():
                 dirs_map[name] = path
+
+        # Preserve manually-added projects that live outside configured sources
+        for name, meta in self.previous_state.items():
+            if meta.get("manually_added") and name not in dirs_map:
+                p = Path(meta["path"])
+                if p.exists():
+                    dirs_map[name] = p
 
         all_dirs = sorted(dirs_map.items(), key=lambda x: x[0])
         total = len(all_dirs)
@@ -77,6 +128,9 @@ class CatalogEngine:
             print(f"  [{i:3d}/{total}] {name:<40}", end="", flush=True)
             meta = scanner.scan()
             meta["name"] = name
+            # Preserve manually_added flag through rescans
+            if self.previous_state.get(name, {}).get("manually_added"):
+                meta["manually_added"] = True
             self.projects[name] = meta
             cat_info = cfg.categories.get(meta["category"], {"icon": "📦", "title": "Uncategorized"})
             print(f"  {meta['status']}  {cat_info['icon']} {cat_info['title']}")

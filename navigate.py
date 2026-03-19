@@ -7,13 +7,14 @@ compact context maps you can paste directly into Claude / ChatGPT prompts —
 saving 40-70% tokens vs live MCP file exploration.
 
 Usage:
-  navigate.py                          Full scan + wiki generation
-  navigate.py --map svc-a svc-b        Generate a prompt map for named projects
-  navigate.py --diff                   Show what changed since last scan
-  navigate.py --wiki-only              Regenerate wiki without re-scanning
-  navigate.py --watch                  Auto-rescan every N minutes
-  navigate.py --config path/to/cfg     Use a specific config file
-  navigate.py --category backend       Scan only projects in this category
+  navigate.py                                   Full scan + wiki generation
+  navigate.py --map svc-a svc-b                 Generate a prompt map for named projects
+  navigate.py --add-project /path/to/project    Add a project from any directory
+  navigate.py --diff                            Show what changed since last scan
+  navigate.py --wiki-only                       Regenerate wiki without re-scanning
+  navigate.py --watch                           Auto-rescan every N minutes
+  navigate.py --config path/to/cfg              Use a specific config file
+  navigate.py --category backend                Scan only projects in this category
 """
 
 import argparse
@@ -21,7 +22,6 @@ import sys
 import time
 from pathlib import Path
 
-# Allow running as: python navigate.py (no install required)
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.config import load
@@ -39,6 +39,8 @@ def main():
 Examples:
   python navigate.py
   python navigate.py --map auth-service frontend db-migrations
+  python navigate.py --add-project /Users/andriy/docvault
+  python navigate.py --add-project /Users/andriy/docvault --name my-vault
   python navigate.py --diff
   python navigate.py --watch --interval 10
         """,
@@ -47,6 +49,10 @@ Examples:
                         help="Path to config file (default: config.yaml)")
     parser.add_argument("--map", nargs="+", metavar="PROJECT",
                         help="Generate a compact prompt map for the given project names")
+    parser.add_argument("--add-project", metavar="PATH",
+                        help="Scan and add a project from any directory into the catalog")
+    parser.add_argument("--name", metavar="NAME",
+                        help="(with --add-project) Override the project name (default: directory name)")
     parser.add_argument("--diff", action="store_true",
                         help="Show changes since the last scan")
     parser.add_argument("--wiki-only", action="store_true",
@@ -62,6 +68,24 @@ Examples:
     args = parser.parse_args()
 
     cfg = load(args.config)
+
+    # ── --add-project: scan a project from any path ─────────
+    if args.add_project:
+        engine = CatalogEngine(cfg)
+        try:
+            meta = engine.add_project(args.add_project, name=args.name)
+        except (FileNotFoundError, NotADirectoryError) as e:
+            print(f"❌  {e}")
+            sys.exit(1)
+
+        # Rebuild wiki page for the added project only
+        engine.projects = engine._load_state()  # reload full catalog
+        WikiGenerator(engine.projects, cfg).generate()
+
+        # Offer to immediately show a map
+        project_name = args.name or Path(args.add_project).name
+        print(f"\n💡  To generate a prompt map: python navigate.py --map {project_name}")
+        return
 
     # ── --map: generate a prompt map ────────────────────────
     if args.map:
@@ -82,7 +106,6 @@ Examples:
         else:
             print(result)
 
-        # Also auto-save numbered copy next to wiki
         wiki_dir = cfg.wiki_dir
         wiki_dir.mkdir(parents=True, exist_ok=True)
         n = 1
@@ -118,7 +141,7 @@ Examples:
         return
 
     # ── default: full scan + wiki ────────────────────────────
-    engine = _run_scan(cfg, args.category, show_diff=args.diff)
+    _run_scan(cfg, args.category, show_diff=args.diff)
 
 
 def _run_scan(cfg, category_filter=None, show_diff=False):
