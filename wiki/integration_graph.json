@@ -1,0 +1,1013 @@
+{
+  "adi-token-dashboard": {
+    "calls": [
+      {
+        "target": "adi-token-health",
+        "endpoint": "/api/scenarios/daily",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "adi-token-health",
+        "endpoint": "/api/scenario",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "adi-token-health",
+        "endpoint": "/api/history",
+        "via": "backend/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "adi-token-health",
+        "endpoint": "/api/scenarios/daily",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "adi-token-health",
+        "endpoint": "/api/scenario",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "adi-token-health",
+        "endpoint": "/api/history",
+        "via": "backend/main.py"
+      }
+    ]
+  },
+  "admin-dashboard": {
+    "calls": [],
+    "called_by": []
+  },
+  "ai-trading-strategy-advisor": {
+    "calls": [
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/sessions/*/end",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/sessions/start",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/catalogs",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/questions/menu",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/sessions/*/log",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/orchestrator/ask",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/sessions/rating",
+        "via": "backend/app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/sessions/*/stats",
+        "via": "backend/app/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/sessions/rating",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/sessions/*/stats",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/questions/menu",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/sessions/*/log",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/sessions/*/end",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/sessions/start",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/catalogs",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/orchestrator/ask",
+        "via": "model-testing-app/backend/main.py"
+      }
+    ]
+  },
+  "base-states": {
+    "calls": [],
+    "called_by": []
+  },
+  "bottom-model": {
+    "calls": [],
+    "called_by": []
+  },
+  "candle-miner": {
+    "calls": [],
+    "called_by": []
+  },
+  "darvin": {
+    "calls": [],
+    "called_by": []
+  },
+  "forex-data-miners": {
+    "calls": [],
+    "called_by": []
+  },
+  "funding-rate-miner": {
+    "calls": [],
+    "called_by": []
+  },
+  "inc-analytics": {
+    "calls": [],
+    "called_by": []
+  },
+  "indicator-tests": {
+    "calls": [],
+    "called_by": []
+  },
+  "indicators-basic": {
+    "calls": [],
+    "called_by": []
+  },
+  "indicators-basic-exante_symbols": {
+    "calls": [],
+    "called_by": []
+  },
+  "llm-training-data-miner": {
+    "calls": [
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/rating",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/*/stats",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/questions/menu",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/*/log",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "smart_sales",
+        "endpoint": "/api/stats",
+        "via": "orchestrator/orchestrator_api.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/*/end",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/start",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/catalogs",
+        "via": "model-testing-app/backend/main.py"
+      },
+      {
+        "target": "ai-trading-strategy-advisor",
+        "endpoint": "/api/orchestrator/ask",
+        "via": "model-testing-app/backend/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/*/end",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/start",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/catalogs",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/questions/menu",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/*/log",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/orchestrator/ask",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/rating",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "ai-trading-strategy-advisor",
+        "endpoint": "/api/sessions/*/stats",
+        "via": "backend/app/main.py"
+      },
+      {
+        "source": "smart_sales",
+        "endpoint": "/api/stats",
+        "via": "app/main.py"
+      }
+    ]
+  },
+  "profit-radar": {
+    "calls": [],
+    "called_by": [
+      {
+        "source": "profit-radar-ai",
+        "endpoint": "/get_icon_text",
+        "via": "www/js/marketplace.js"
+      },
+      {
+        "source": "profit-radar-io",
+        "endpoint": "/get_icon_text",
+        "via": "www/js/dashboard.js"
+      }
+    ]
+  },
+  "profitradar": {
+    "calls": [],
+    "called_by": []
+  },
+  "profitradar-api": {
+    "calls": [],
+    "called_by": []
+  },
+  "profitradar-development": {
+    "calls": [],
+    "called_by": []
+  },
+  "profitradar-landing": {
+    "calls": [],
+    "called_by": []
+  },
+  "scalping-pnl": {
+    "calls": [],
+    "called_by": []
+  },
+  "scalping-pnl-info": {
+    "calls": [],
+    "called_by": []
+  },
+  "scalping-ui": {
+    "calls": [],
+    "called_by": []
+  },
+  "shark-bot": {
+    "calls": [],
+    "called_by": []
+  },
+  "shark-monitoring": {
+    "calls": [],
+    "called_by": []
+  },
+  "signal-emulator": {
+    "calls": [],
+    "called_by": []
+  },
+  "simple-evaluation-framework": {
+    "calls": [],
+    "called_by": []
+  },
+  "slippage-analytics": {
+    "calls": [],
+    "called_by": []
+  },
+  "stock-data-miners": {
+    "calls": [],
+    "called_by": []
+  },
+  "telegram-bot": {
+    "calls": [],
+    "called_by": []
+  },
+  "wizard-backend": {
+    "calls": [],
+    "called_by": []
+  },
+  "FamilyTranslator": {
+    "calls": [],
+    "called_by": []
+  },
+  "VoiceVocab-Trainer": {
+    "calls": [],
+    "called_by": []
+  },
+  "adi-token-health": {
+    "calls": [
+      {
+        "target": "adi-token-dashboard",
+        "endpoint": "/api/scenarios/daily",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "adi-token-dashboard",
+        "endpoint": "/api/scenario",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "adi-token-dashboard",
+        "endpoint": "/api/history",
+        "via": "backend/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "adi-token-dashboard",
+        "endpoint": "/api/scenarios/daily",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "adi-token-dashboard",
+        "endpoint": "/api/scenario",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "adi-token-dashboard",
+        "endpoint": "/api/history",
+        "via": "backend/main.py"
+      }
+    ]
+  },
+  "aviator": {
+    "calls": [],
+    "called_by": []
+  },
+  "belief-trajectory-demo": {
+    "calls": [
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*/decision",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/trending",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*/price-history",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*/full",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*/analysis",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/demo/full",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*/statistical",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/markets/*/trajectory",
+        "via": "backend/main.py"
+      },
+      {
+        "target": "Polymarket",
+        "endpoint": "/api/demo/markets",
+        "via": "backend/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*/price-history",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*/full",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*/analysis",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*/statistical",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/demo/full",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/demo/markets",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*/trajectory",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/*/decision",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "source": "Polymarket",
+        "endpoint": "/api/markets/trending",
+        "via": "belief-trajectory-demo/backend/main.py"
+      }
+    ]
+  },
+  "best-strat-pipeline": {
+    "calls": [],
+    "called_by": []
+  },
+  "buyers_insite_Investigation": {
+    "calls": [],
+    "called_by": []
+  },
+  "claude-codebase-navigator": {
+    "calls": [],
+    "called_by": []
+  },
+  "corporate-data": {
+    "calls": [],
+    "called_by": []
+  },
+  "live-predictor": {
+    "calls": [],
+    "called_by": []
+  },
+  "live-predictor-system": {
+    "calls": [],
+    "called_by": []
+  },
+  "markov-predictor": {
+    "calls": [],
+    "called_by": []
+  },
+  "markov_quantile_predictor": {
+    "calls": [],
+    "called_by": []
+  },
+  "predictor_mq": {
+    "calls": [],
+    "called_by": []
+  },
+  "predictor_mq_3.0": {
+    "calls": [],
+    "called_by": []
+  },
+  "profit-radar-ai": {
+    "calls": [
+      {
+        "target": "profit-radar",
+        "endpoint": "/get_icon_text",
+        "via": "www/js/marketplace.js"
+      }
+    ],
+    "called_by": []
+  },
+  "profitradar.io": {
+    "calls": [],
+    "called_by": []
+  },
+  "smart_sales": {
+    "calls": [
+      {
+        "target": "rox",
+        "endpoint": "/api/portfolio",
+        "via": "app/main.py"
+      },
+      {
+        "target": "llm-training-data-miner",
+        "endpoint": "/api/stats",
+        "via": "app/main.py"
+      },
+      {
+        "target": "rox",
+        "endpoint": "/api/account/*",
+        "via": "app/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "llm-training-data-miner",
+        "endpoint": "/api/stats",
+        "via": "orchestrator/orchestrator_api.py"
+      },
+      {
+        "source": "rox",
+        "endpoint": "/api/portfolio",
+        "via": "main.py"
+      },
+      {
+        "source": "rox",
+        "endpoint": "/api/account/*",
+        "via": "main.py"
+      }
+    ]
+  },
+  "strategy-market": {
+    "calls": [],
+    "called_by": []
+  },
+  "verdict": {
+    "calls": [],
+    "called_by": []
+  },
+  "AI powered optimisation": {
+    "calls": [],
+    "called_by": []
+  },
+  "Antigravity": {
+    "calls": [],
+    "called_by": []
+  },
+  "Cabal Notebooks Backup": {
+    "calls": [],
+    "called_by": []
+  },
+  "Cases": {
+    "calls": [],
+    "called_by": []
+  },
+  "Data_collection": {
+    "calls": [],
+    "called_by": []
+  },
+  "FF": {
+    "calls": [],
+    "called_by": []
+  },
+  "Pair Trading": {
+    "calls": [],
+    "called_by": []
+  },
+  "Pipeline": {
+    "calls": [],
+    "called_by": []
+  },
+  "Polars": {
+    "calls": [],
+    "called_by": []
+  },
+  "Polymarket": {
+    "calls": [
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/price-history",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/full",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/analysis",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/statistical",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/demo/full",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/demo/markets",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/trajectory",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/decision",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets",
+        "via": "belief-trajectory-demo/backend/main.py"
+      },
+      {
+        "target": "belief-trajectory-demo",
+        "endpoint": "/api/markets/trending",
+        "via": "belief-trajectory-demo/backend/main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/decision",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/trending",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/price-history",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/full",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/analysis",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/demo/full",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/statistical",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/markets/*/trajectory",
+        "via": "backend/main.py"
+      },
+      {
+        "source": "belief-trajectory-demo",
+        "endpoint": "/api/demo/markets",
+        "via": "backend/main.py"
+      }
+    ]
+  },
+  "Portfolio_optimization": {
+    "calls": [],
+    "called_by": []
+  },
+  "ProfitRadar_Codebase": {
+    "calls": [],
+    "called_by": []
+  },
+  "ProfitRadar_main": {
+    "calls": [],
+    "called_by": []
+  },
+  "Prtf rebalancing": {
+    "calls": [],
+    "called_by": []
+  },
+  "Shares": {
+    "calls": [],
+    "called_by": []
+  },
+  "Statical arb on custom candels": {
+    "calls": [],
+    "called_by": []
+  },
+  "SynDS": {
+    "calls": [],
+    "called_by": []
+  },
+  "Synthetic Dataset": {
+    "calls": [],
+    "called_by": []
+  },
+  "V_5": {
+    "calls": [],
+    "called_by": []
+  },
+  "adaptive_exit_strategy": {
+    "calls": [],
+    "called_by": []
+  },
+  "bruteforce-analytics": {
+    "calls": [],
+    "called_by": []
+  },
+  "c2-strategy-gapfill-main": {
+    "calls": [],
+    "called_by": []
+  },
+  "c2-strategy-longtrend-lowvol-main": {
+    "calls": [],
+    "called_by": []
+  },
+  "check_strategies": {
+    "calls": [],
+    "called_by": []
+  },
+  "claude-server": {
+    "calls": [],
+    "called_by": []
+  },
+  "dataintelligencelab.com": {
+    "calls": [],
+    "called_by": []
+  },
+  "development plans": {
+    "calls": [],
+    "called_by": []
+  },
+  "doc-flow": {
+    "calls": [],
+    "called_by": []
+  },
+  "doc-vault": {
+    "calls": [],
+    "called_by": []
+  },
+  "docvault": {
+    "calls": [],
+    "called_by": []
+  },
+  "fast-backtest": {
+    "calls": [],
+    "called_by": []
+  },
+  "ff_arbitrage": {
+    "calls": [],
+    "called_by": []
+  },
+  "financial-data-mcp": {
+    "calls": [],
+    "called_by": []
+  },
+  "freqtrade-develop": {
+    "calls": [],
+    "called_by": []
+  },
+  "freqtrade-strategies-0d2cb46883a2e00caf00a886c7bbecd238ac090d": {
+    "calls": [],
+    "called_by": []
+  },
+  "funding-rate-miner-master 2": {
+    "calls": [],
+    "called_by": []
+  },
+  "hybrid_model_api": {
+    "calls": [],
+    "called_by": []
+  },
+  "llm-cost-tracker": {
+    "calls": [],
+    "called_by": []
+  },
+  "llm-council": {
+    "calls": [],
+    "called_by": []
+  },
+  "llm-training-data-miner-strat-factory": {
+    "calls": [],
+    "called_by": []
+  },
+  "logs": {
+    "calls": [],
+    "called_by": []
+  },
+  "markov-predictor-service": {
+    "calls": [],
+    "called_by": []
+  },
+  "markov_predictor": {
+    "calls": [],
+    "called_by": []
+  },
+  "mechanism-signal-mapper": {
+    "calls": [],
+    "called_by": []
+  },
+  "meta-labeling": {
+    "calls": [],
+    "called_by": []
+  },
+  "music": {
+    "calls": [],
+    "called_by": []
+  },
+  "pattern-recognition": {
+    "calls": [],
+    "called_by": []
+  },
+  "pattern_config_gen": {
+    "calls": [],
+    "called_by": []
+  },
+  "pitch_dev": {
+    "calls": [],
+    "called_by": []
+  },
+  "predictor-analysis": {
+    "calls": [],
+    "called_by": []
+  },
+  "predictor-visualization": {
+    "calls": [],
+    "called_by": []
+  },
+  "predictor_mq_2.0": {
+    "calls": [],
+    "called_by": []
+  },
+  "profit-radar-back": {
+    "calls": [],
+    "called_by": []
+  },
+  "profit-radar-io": {
+    "calls": [
+      {
+        "target": "profit-radar",
+        "endpoint": "/get_icon_text",
+        "via": "www/js/dashboard.js"
+      }
+    ],
+    "called_by": []
+  },
+  "profitradar-1": {
+    "calls": [],
+    "called_by": []
+  },
+  "profitradar-landings": {
+    "calls": [],
+    "called_by": []
+  },
+  "profitradar_backup_20250726_104451": {
+    "calls": [],
+    "called_by": []
+  },
+  "profitradar_ui": {
+    "calls": [],
+    "called_by": []
+  },
+  "project_cataloger": {
+    "calls": [],
+    "called_by": []
+  },
+  "resorts": {
+    "calls": [],
+    "called_by": []
+  },
+  "rox": {
+    "calls": [
+      {
+        "target": "smart_sales",
+        "endpoint": "/api/portfolio",
+        "via": "main.py"
+      },
+      {
+        "target": "smart_sales",
+        "endpoint": "/api/account/*",
+        "via": "main.py"
+      }
+    ],
+    "called_by": [
+      {
+        "source": "smart_sales",
+        "endpoint": "/api/portfolio",
+        "via": "app/main.py"
+      },
+      {
+        "source": "smart_sales",
+        "endpoint": "/api/account/*",
+        "via": "app/main.py"
+      }
+    ]
+  },
+  "stress": {
+    "calls": [],
+    "called_by": []
+  },
+  "trade-fun": {
+    "calls": [],
+    "called_by": []
+  },
+  "trading_service_v1": {
+    "calls": [],
+    "called_by": []
+  },
+  "trading_service_v2": {
+    "calls": [],
+    "called_by": []
+  },
+  "trailing stop": {
+    "calls": [],
+    "called_by": []
+  },
+  "volatility": {
+    "calls": [],
+    "called_by": []
+  },
+  "volatility_m4": {
+    "calls": [],
+    "called_by": []
+  }
+}

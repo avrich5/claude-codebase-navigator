@@ -1,0 +1,9 @@
+.env
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+history/
+catalog_state.json
+wiki/_prompt_map_*.md
+wiki/.DS_Store
